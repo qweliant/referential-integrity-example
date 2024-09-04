@@ -4,7 +4,7 @@ Ok so to me, this means, i take something and change it here, but the value does
 
 Referential integrity is the implied constraint placed on the tuples of values in a table referencing or pointing to values from another table
 - ```
-  Referential Integrity from R.A to S.B -&gt; Each Value in column A of table R must appear in the reference to column B of table S
+  Referential Integrity from R.A to S.B: Each Value in column A of table R must appear in the reference to column B of table S
   ```
 - Example at 2:57 here
 - Essentially, the foreign keys or multiple attribute foreign key relating tables must be referentially equal to each other, otherwise referential integrity cannot be validated
