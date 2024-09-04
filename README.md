@@ -22,6 +22,7 @@ Referential integrity is the implied constraint placed on the tuples of values i
       - I like the idea of editing fields anywhere by reference. It would be cool if a field was global and could be updated across communities
         - like say the avg growth rate of squash become a value determined by review processes across communities type shit
     - I wonder if we can CAN enforce referential integrity through Json values. Maybe thats what Eric means when he says adding IDs to the blob of field values to act as a unique_id restraint?? Idk. Regardless it seems problematic because we would have to keep references in the db updated each time a relationship has something done on it and may not be able to do that easily on a jsonBlob. Or the values just could become a table maybe???? Regardless we need to flesh out relationships to understand how we should model them and what may or may not be possible. Seem slike a lot of uncertainty
+
 There are a few ways to ruin referential integrity. If we think about the image above, we see APPLY references a unique foreign key to STUDENT and a unique column in COLLEGE
 - Remember, for referential integrity from R.A referencing S.B each value in column A of table R must appear in column B of table S
   - A is the foreign key restraint. cName or sID in APPLY
@@ -38,7 +39,8 @@ There are a few ways to ruin referential integrity. If we think about the image 
     - Updating the value of A shouldn't work either. These are references to values in S not the values themselves
   - Update S.B
     - We cannot update S.B bc that value is referenced as a foreign key in R.A. That one doesn't seem as obvious
-- We can start to see how this is really a pointer thing. But I think theres relational db architecture i'm not aware of like CASCADING deletes etc. 
+- We can start to see how this is really a pointer thing. But I think theres relational db architecture i'm not aware of like CASCADING deletes etc.
+  
 Well, there are some special actions lol
 - Delete from S(the reference table)
   - Restrict(default)
