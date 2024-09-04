@@ -13,6 +13,7 @@ type Application struct {
 	Cname    string
 	Major    pgtype.Text
 	Decision pgtype.Text
+	Value    []byte
 }
 
 type College struct {

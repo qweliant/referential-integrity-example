@@ -17,7 +17,7 @@ INSERT INTO applications (
 ) VALUES (
   $1, $2, $3, $4
 )
-RETURNING sid, cname, major, decision
+RETURNING sid, cname, major, decision, value
 `
 
 type CreateApplicationParams struct {
@@ -40,6 +40,7 @@ func (q *Queries) CreateApplication(ctx context.Context, arg CreateApplicationPa
 		&i.Cname,
 		&i.Major,
 		&i.Decision,
+		&i.Value,
 	)
 	return i, err
 }
@@ -84,6 +85,144 @@ type CreateStudentParams struct {
 
 func (q *Queries) CreateStudent(ctx context.Context, arg CreateStudentParams) (Student, error) {
 	row := q.db.QueryRow(ctx, createStudent,
+		arg.Sid,
+		arg.Sname,
+		arg.Gpa,
+		arg.Sizehs,
+	)
+	var i Student
+	err := row.Scan(
+		&i.Sid,
+		&i.Sname,
+		&i.Gpa,
+		&i.Sizehs,
+	)
+	return i, err
+}
+
+const deleteApplication = `-- name: DeleteApplication :one
+DELETE FROM applications
+WHERE sID = $1 AND cName = $2
+RETURNING sid, cname, major, decision, value
+`
+
+type DeleteApplicationParams struct {
+	Sid   int32
+	Cname string
+}
+
+func (q *Queries) DeleteApplication(ctx context.Context, arg DeleteApplicationParams) (Application, error) {
+	row := q.db.QueryRow(ctx, deleteApplication, arg.Sid, arg.Cname)
+	var i Application
+	err := row.Scan(
+		&i.Sid,
+		&i.Cname,
+		&i.Major,
+		&i.Decision,
+		&i.Value,
+	)
+	return i, err
+}
+
+const deleteCollege = `-- name: DeleteCollege :one
+DELETE FROM colleges
+WHERE cName = $1
+RETURNING cname, state, enrollment
+`
+
+func (q *Queries) DeleteCollege(ctx context.Context, cname string) (College, error) {
+	row := q.db.QueryRow(ctx, deleteCollege, cname)
+	var i College
+	err := row.Scan(&i.Cname, &i.State, &i.Enrollment)
+	return i, err
+}
+
+const deleteStudent = `-- name: DeleteStudent :one
+DELETE FROM students
+WHERE sID = $1
+RETURNING sid, sname, gpa, sizehs
+`
+
+func (q *Queries) DeleteStudent(ctx context.Context, sid int32) (Student, error) {
+	row := q.db.QueryRow(ctx, deleteStudent, sid)
+	var i Student
+	err := row.Scan(
+		&i.Sid,
+		&i.Sname,
+		&i.Gpa,
+		&i.Sizehs,
+	)
+	return i, err
+}
+
+const updateApplication = `-- name: UpdateApplication :one
+UPDATE applications
+SET major = $2, decision = $3
+WHERE sID = $1 AND cName = $4
+RETURNING sid, cname, major, decision, value
+`
+
+type UpdateApplicationParams struct {
+	Sid      int32
+	Major    pgtype.Text
+	Decision pgtype.Text
+	Cname    string
+}
+
+func (q *Queries) UpdateApplication(ctx context.Context, arg UpdateApplicationParams) (Application, error) {
+	row := q.db.QueryRow(ctx, updateApplication,
+		arg.Sid,
+		arg.Major,
+		arg.Decision,
+		arg.Cname,
+	)
+	var i Application
+	err := row.Scan(
+		&i.Sid,
+		&i.Cname,
+		&i.Major,
+		&i.Decision,
+		&i.Value,
+	)
+	return i, err
+}
+
+const updateCollege = `-- name: UpdateCollege :one
+UPDATE colleges
+SET state = $2, enrollment = $3
+WHERE cName = $1
+RETURNING cname, state, enrollment
+`
+
+type UpdateCollegeParams struct {
+	Cname      string
+	State      pgtype.Text
+	Enrollment pgtype.Int4
+}
+
+func (q *Queries) UpdateCollege(ctx context.Context, arg UpdateCollegeParams) (College, error) {
+	row := q.db.QueryRow(ctx, updateCollege, arg.Cname, arg.State, arg.Enrollment)
+	var i College
+	err := row.Scan(&i.Cname, &i.State, &i.Enrollment)
+	return i, err
+}
+
+const updateStudent = `-- name: UpdateStudent :one
+UPDATE students
+SET sName = $2, GPA = $3, sizeHS = $4
+WHERE sID = $1
+RETURNING sid, sname, gpa, sizehs
+`
+
+type UpdateStudentParams struct {
+	Sid    int32
+	Sname  pgtype.Text
+	Gpa    pgtype.Float4
+	Sizehs pgtype.Int4
+}
+
+func (q *Queries) UpdateStudent(ctx context.Context, arg UpdateStudentParams) (Student, error) {
+	row := q.db.QueryRow(ctx, updateStudent,
 		arg.Sid,
 		arg.Sname,
 		arg.Gpa,
