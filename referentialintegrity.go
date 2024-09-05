@@ -100,12 +100,6 @@ func run() {
 	if err != nil {
 		log.Println(err)
 	}
-
-	// update the apply table
-	_, err = queries.UpdateApplication(ctx, referentialintegrity.UpdateApplicationParams{
-		Sid: 345,
-	})
-
 }
 
 func main() {

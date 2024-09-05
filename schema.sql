@@ -14,7 +14,7 @@ CREATE TABLE Applications (
     cName TEXT,
     major TEXT,
     decision TEXT,
-    value JSON,
+    metadata JSON,
     PRIMARY KEY (sID, cName),
     FOREIGN KEY (sID) REFERENCES Students(sID),
     FOREIGN KEY (cName) REFERENCES Colleges(cName)
